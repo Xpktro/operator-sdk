@@ -1,0 +1,4 @@
+# The mirrors are hand-ported from the firmware headers, and a port is diffed against
+# the original by eye. Formatting them independently would make every such diff noise,
+# so they keep the firmware's layout verbatim.
+DisableFormat: true

@@ -1,0 +1,49 @@
+name: API reference
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# A deployment that has started always runs to completion.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/configure-pages@v6
+
+      - name: Install Doxygen 1.17.0
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/doxygen.tar.gz" \
+            https://github.com/doxygen/doxygen/releases/download/Release_1_17_0/doxygen-1.17.0.linux.bin.tar.gz
+          echo "75419ef4f446fc1c24ef12514b574e66e898ee6f527c6ae2ad84f91a905823c2  $RUNNER_TEMP/doxygen.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/doxygen.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/doxygen-1.17.0/bin" >> "$GITHUB_PATH"
+
+      - name: Build the site
+        run: doxygen Doxyfile
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

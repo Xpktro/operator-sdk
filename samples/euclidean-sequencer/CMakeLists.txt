@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.28)
+project(euclidean_sequencer LANGUAGES CXX)
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/operator-mode.cmake)
+
+op_add_mode(euclidean_sequencer TYPE output SOURCES main.cpp)

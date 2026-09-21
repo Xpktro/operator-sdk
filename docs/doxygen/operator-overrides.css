@@ -1,0 +1,42 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Operator SDK overrides for the vendored doxygen-awesome theme.
+ *
+ * Kept in a separate stylesheet (loaded LAST via HTML_EXTRA_STYLESHEET) so the
+ * vendored doxygen-awesome CSS stays pristine and easy to re-vendor. Only
+ * Operator-specific adjustments live here.
+ */
+
+/*
+ * Dark-mode toggle fit (sidebar-only layout).
+ *
+ * The dark-mode toggle is injected as a sibling right after #MSearchBox, on the
+ * same row. doxygen-awesome-sidebar-only sizes the search box to the full
+ * sidebar content width, leaving no room, so the 33px toggle overflowed the
+ * sidebar's right edge and was clipped. Trim the search box (and its inner
+ * field) by the toggle's width + gap so both fit on the row — the search box
+ * stays wide, matching the upstream demo's proportions. These mirror
+ * doxygen-awesome-sidebar-only's own width formulas, inside the same media
+ * query, minus (--searchbar-height + --spacing-small) for the toggle.
+ */
+@media screen and (min-width: 768px) {
+    /*
+     * Taller header slot. doxygen-awesome-sidebar-only reserves a fixed
+     * --top-height (120px) for the title + search area; #top is that height
+     * with overflow:hidden and the nav tree begins immediately below it. Our
+     * two-line PROJECT_BRIEF makes the header taller (search box bottom ~124px),
+     * so the default clipped the search box and left no gap before the nav.
+     * Raise the slot so the search box is fully visible with a margin below it.
+     */
+    html {
+        --top-height: 145px;
+    }
+
+    #MSearchBox {
+        width: calc(var(--side-nav-fixed-width) - 2 * var(--spacing-medium) - var(--searchbar-height) - var(--spacing-small)) !important;
+    }
+
+    #MSearchField {
+        width: calc(var(--side-nav-fixed-width) - 2 * var(--spacing-medium) - var(--searchbar-height) - var(--spacing-small) - 65px) !important;
+    }
+}

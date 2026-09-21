@@ -1,0 +1,10 @@
+# Every build writes into a directory named build, so this one rule covers the
+# Doxygen site at the root and each mode or test build directory at any depth.
+build/
+
+# Written by the Python tool tests.
+__pycache__/
+.pytest_cache/
+
+# Finder metadata on macOS.
+.DS_Store

@@ -1,0 +1,82 @@
+# Doxygen configuration for the Operator SDK API reference.
+#
+# All paths are relative to the SDK root (this file's directory).
+# Run from the SDK root:  doxygen Doxyfile
+# Output lands in build/html/.
+#
+# The reference is generated directly from the /// comments in include/ plus the
+# Markdown guides under docs/. HTML only. The site is styled by
+# the vendored doxygen-awesome-css theme in docs/doxygen/.
+
+# --- Project identity -------------------------------------------------------
+PROJECT_NAME           = "Operator SDK"
+PROJECT_BRIEF          = "Build MIDI processing and UI modes for the Operator device"
+PROJECT_NUMBER         =
+
+# --- Input ------------------------------------------------------------------
+# Only public SDK content: the headers and the guides. docs/index.md is the
+# landing page.
+INPUT                  = include sim/include docs
+FILE_PATTERNS          = *.h *.md
+RECURSIVE              = YES
+# docs/doxygen/ holds the vendored theme assets, not documentation content.
+EXCLUDE                = docs/doxygen sim/include/doctest.h
+EXCLUDE_PATTERNS       = */build/* */tests/* */__pycache__/*
+
+# --- Markdown handling ------------------------------------------------------
+# .md / .markdown are recognized as Markdown natively.
+MARKDOWN_SUPPORT       = YES
+# GitHub-style auto heading anchors so [text](#slug) links in the guides resolve.
+MARKDOWN_ID_STYLE      = GITHUB
+USE_MDFILE_AS_MAINPAGE = docs/index.md
+
+# --- Extraction -------------------------------------------------------------
+# Only render entities that carry a /// doc-comment. The SDK headers encode the
+# public/internal boundary by comment style: the public mode-authoring API uses
+# /// doc-comments, while non-public encoding helpers use plain // comments.
+# EXTRACT_ALL=NO + HIDE_UNDOC_* therefore keeps the undocumented helpers out of
+# the rendered reference automatically, so third-party mode authors only see the
+# public API.
+EXTRACT_ALL            = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+# The ABI constants a mode compares against (kStorageBusy, kSysExStart and the
+# rest) are file-scope statics, so extraction has to reach them for their ///
+# docs to render and for @ref to link to them. HIDE_UNDOC_MEMBERS still keeps
+# every // commented static out.
+EXTRACT_STATIC         = YES
+JAVADOC_AUTOBRIEF      = YES
+# Hide macro bodies (the OP_MODE_* macros expand to internal wiring: the
+# extern "C" export decorator, the static_assert semicolon-swallower, mangled
+# param names). Keep 1-line constant values like `= 0x01`. The /// docs describe
+# the macros. All documented public constants are single-line initializers.
+MAX_INITIALIZER_LINES  = 1
+# Strip GCC attributes so packed ABI structs (OpmHeader, ParamSpec) parse and
+# appear in the reference. EXPAND_ONLY_PREDEF keeps this limited to the one
+# substitution below, leaving the OP_MODE_* macros untouched.
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = __attribute__(x)=
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+# --- Output -----------------------------------------------------------------
+OUTPUT_DIRECTORY       = build
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+# --- HTML / theme -----------------------------------------------------------
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT
+HTML_COPY_CLIPBOARD    = NO
+HTML_HEADER            = docs/doxygen/header.html
+HTML_EXTRA_STYLESHEET  = docs/doxygen/doxygen-awesome.css \
+                         docs/doxygen/doxygen-awesome-sidebar-only.css \
+                         docs/doxygen/operator-overrides.css
+HTML_EXTRA_FILES       = docs/doxygen/doxygen-awesome-darkmode-toggle.js \
+                         docs/doxygen/doxygen-awesome-fragment-copy-button.js
+
+# No verbatim source listings. They expose raw internal declarations.
+VERBATIM_HEADERS       = NO
